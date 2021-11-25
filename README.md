@@ -94,6 +94,8 @@ Other than creating the secret (remember to prefix the user name with either the
 		name: ldap-group-sync
 		namespace: group-sync-operator
 	      insecure: true
+	      groupUIDNameMapping:
+		"CN=OpenShift,CN=Users,DC=corp,DC=example,DC=com" : openshift-users
 	      activeDirectory:
 		usersQuery:
 		  baseDN: "DC=corp,DC=example,DC=com"
@@ -107,6 +109,11 @@ Other than creating the secret (remember to prefix the user name with either the
 
 This listing assumes that only users defined in the group CN=OpenShift,CN=Users,DC=corp,DC=example,DC=com should be synchronised. Note that SimpleAD stores both users and groups in CN=Users. In a real-world directory it is expected that these would be stored somewhere separate (e.g., CN=Groups or OU=Groups).
 
-In either case use commands like this to figure out the correct filter format:
+In either case use commands like this to figure out the correct filter format for user groups:
 
 ldapsearch -x -H ldap://corp.example.com -D "CORP\Administrator" -b "DC=corp,DC=example,DC=com" -W '(&(objectClass=person)(memberOf=CN=OpenShift,CN=Users,DC=corp,DC=example,DC=com))'
+
+Verify the result of the group sync operation using the following commands:
+
+	oc get groups
+	oc describe group/openshift-users
