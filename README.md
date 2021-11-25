@@ -1,8 +1,8 @@
 # ROSA with LDAP
 
-The target LDAP directory for this example is based on AWS Simple AD without TLS. It was configured with a directory DNS name of corp.example.com (corresponding NetBIOS name is corp) along with a private hosted zone in Route 53 (example.com) and an A record (corp.example.com) that is mapped to two directory DNS addresses that Simple AD generates in the ROSA private subnets.
+The target LDAP directory for this example is based on AWS Simple AD without TLS. It was configured with a directory DNS name of corp.example.com along with a private hosted zone in Route 53 (example.com) and an A record (corp.example.com) that is mapped to two directory DNS addresses that Simple AD adds to two ROSA VPC subnets.
 
-Use OCM to configure the LDAP Identity Provider integration for ROSA. The generated configuration is stored in the openshift-authentication namespace as an OAuth object shown below. Note the preferredUsername setting (changed from uid to sAMAccountName) as well as the bindDN (prefixed with the NetBIOS name).
+Use OCM to configure the LDAP Identity Provider integration for ROSA. The generated configuration is stored in the openshift-authentication namespace as an OAuth object shown below. Note the preferredUsername setting (changed default from uid to sAMAccountName) as well as the bindDN (prefixed the domain administrator with the NetBIOS name of the domain) in order for user logins to succeed.
 
 	apiVersion: v1
 	items:
@@ -57,11 +57,15 @@ Use OCM to configure the LDAP Identity Provider integration for ROSA. The genera
 	  resourceVersion: ""
 	  selfLink: ""
 
-With this configuration in place and assuming a user entry has been created within Simple AD and password verfication confirmed from a Windows Server 2019 instance as per:
+To populate Simple AD with a user carefully follow the instructions in the AWS documentation. This will require setting a Windows Server 2019 instance.
+
+https://docs.aws.amazon.com/directoryservice/latest/admin-guide/directory_simple_ad.html
+
+With this configuration in place and assuming a user entry has been created in Simple AD, it is possible to verify the user password via the following instructions:
 
 https://itpro-tips.com/2019/test-ad-authentication-via-powershell/
 
-Then it should be possible to login using the sAMAccountName (e.g., johndoe) via the OpenShift console.
+If password verification was sucessful the next step is to attempt this from the OpenShift console. Use the sAMAccountName entry for the user.
 
 To assign this user to the cluster-admins group this can be done via OCM. The effect of all of this can be validated using the following:
 
@@ -69,4 +73,4 @@ To assign this user to the cluster-admins group this can be done via OCM. The ef
 	oc get groups
 	oc get identities
 	
-To troubleshoot login issue check each of the logs of the oauth-openshift pods in the openshift-authentication namespace.
+To troubleshoot login issue check each of the logs of the oauth-openshift pods in the openshift-authentication namespace. Note that any changes made to the identity provider configuration via OCM result in pods being restarted and this may take a few minutes.
