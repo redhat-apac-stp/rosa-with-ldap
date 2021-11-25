@@ -76,3 +76,5 @@ To assign this user to the cluster-admins group this can be done via OCM. The ef
 	oc get identities
 	
 To troubleshoot login issue check each of the logs of the oauth-openshift pods in the openshift-authentication namespace. Note that any changes made to the identity provider configuration via OCM result in pods being restarted and this may take a few minutes.
+
+TBD: ROSA integration using LDAP with TLS enabled.
