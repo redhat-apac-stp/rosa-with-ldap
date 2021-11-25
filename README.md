@@ -1,8 +1,10 @@
 # ROSA with LDAP
 
-The target LDAP directory for this example is based on AWS Simple AD without TLS. It was configured with a directory DNS name of corp.example.com along with a private hosted zone in Route 53 (example.com) and an A record (corp.example.com) that is mapped to two directory DNS addresses that Simple AD adds to two ROSA VPC subnets.
+The target LDAP directory for this example is based on AWS Simple AD without TLS. It was configured with a directory DNS name of corp.example.com along with a private hosted zone in Route 53 (example.com) and an A record (corp.example.com) that is mapped to two directory DNS addresses that Simple AD provisions in the ROSA VPC.
 
-Use OCM to configure the LDAP Identity Provider integration for ROSA. The generated configuration is stored in the openshift-authentication namespace as an OAuth object shown below. Note the preferredUsername setting (changed default from uid to sAMAccountName) as well as the bindDN (prefixed the domain administrator with the NetBIOS name of the domain) in order for user logins to succeed.
+Use OCM to configure the LDAP Identity Provider integration for ROSA. The generated configuration is stored in the openshift-authentication namespace as an OAuth object shown below for reference purposes. Note that the preferredUsername setting was changed from from uid to sAMAccountName and the format for the bindDN includes the NetBIOS name of the domain as a prefix (alternatively enter Adminstrator@corp.example.com for the binDN if you so prefer).
+
+Do NOT apply this configuration manually (the only supported option for configuring an Identity Provider for ROSA is via OCM).
 
 	apiVersion: v1
 	items:
