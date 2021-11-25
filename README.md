@@ -35,7 +35,7 @@ Do NOT apply this configuration manually (the only supported option for configur
 		  - cn
 		  preferredUsername:
 		  - sAMAccountName
-		bindDN: corp\Administrator
+		bindDN: CORP\Administrator
 		bindPassword:
 		  name: idp-bind-password-1om8usdpgkn7l6it6ft9lv89saf0l64q
 		ca:
@@ -78,3 +78,35 @@ To assign this user to the cluster-admins group this can be done via OCM. The ef
 To troubleshoot login issue check each of the logs of the oauth-openshift pods in the openshift-authentication namespace. Note that any changes made to the identity provider configuration via OCM result in pods being restarted and this may take a few minutes.
 
 TBD: ROSA integration using LDAP with TLS enabled.
+
+Synchronising of users and groups was achieved using the Group Sync Operator from RedHat Communities of Practice. Instructions for installing it can be found here:
+
+Other than creating the secret (remember to prefix the user name with either the NetBIOS name or use the email form) the critical piece of configuration that needs to be configured is the GroupSync custom resource.
+
+	apiVersion: redhatcop.redhat.io/v1alpha1
+	kind: GroupSync
+	metadata:
+	  name: ldap-groupsync
+	spec:
+	  providers:
+	  - ldap:
+	      credentialsSecret:
+		name: ldap-group-sync
+		namespace: group-sync-operator
+	      insecure: true
+	      activeDirectory:
+		usersQuery:
+		  baseDN: "DC=corp,DC=example,DC=com"
+		  derefAliases: never
+		  filter: (&(objectClass=person)(memberOf=CN=OpenShift,CN=Users,DC=corp,DC=example,DC=com))
+		  scope: sub
+		userNameAttributes: [ sAMAccountName ]
+		groupMembershipAttributes: [ memberOf ]
+	      url: ldap://corp.example.com:389
+	    name: SimpleAD
+
+This listing assumes that only users defined in the group CN=OpenShift,CN=Users,DC=corp,DC=example,DC=com should be synchronised. Note that SimpleAD stores both users and groups in CN=Users. In a real-world directory it is expected that these would be stored somewhere separate (e.g., CN=Groups or OU=Groups).
+
+In either case use commands like this to figure out the correct filter format:
+
+ldapsearch -x -H ldap://corp.example.com -D "CORP\Administrator" -b "DC=corp,DC=example,DC=com" -W '(&(objectClass=person)(memberOf=CN=OpenShift,CN=Users,DC=corp,DC=example,DC=com))'
