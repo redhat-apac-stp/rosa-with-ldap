@@ -1,16 +1,15 @@
 == Creating group sync
 
 Create a new project
-----
+```bash
 # oc new-project ldap-sync
-----
+```
 
 Create yaml file
 ldap-group-sync.yaml
 [source,yaml]
 
-```
-
+```yaml
 apiVersion: v1
 kind: LDAPSyncConfig
 url: ldap://<ldap server address>
@@ -41,33 +40,32 @@ rfc2307:
 
 Create generic secret
 
-```
+```bash
 # oc create secret generic ldap-sync --from-file=ldap-sync.yaml=ldap-group-sync.yaml
 ```
 
 Sync the service account
 
-```
+```bash
 # oc create sa ldap-sync
 ```
 
 Sync cluster rols for ldap
 
-```
+```bash
 # oc create clusterrole ldap-group-sync \
     --verb=create,update,patch,delete,get,list \
     --resource=groups.user.openshift.io
 ```
 
 Create role binding for ldap sync
-```
+```bash
 # oc adm policy add-cluster-role-to-user ldap-group-sync -z ldap-sync -n ldap-sync
 ```
 
-Create yaml file for cronjob
-ldap-group-sync.yaml
-[source,yaml]
-```
+Create yaml file for cronjob ldap-group-sync.yaml
+
+```yaml
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -106,15 +104,17 @@ spec:
 ```
 
 Apply the yaml to create the cronjob
-```
+
+```bash
 # oc create -f ldap-group-sync.yaml
+
 ```
 
 == Configuring roles to the user groups
 
 Assign roles to groups by running the following command:
 
-```
+```bash
 # NOT IN USE FOR ROSA oc adm policy add-cluster-role-to-group cluster-admin <group name>
 oc adm policy add-cluster-role-to-group cluster-status ocp-dev-view
 oc adm policy add-cluster-role-to-group admin ocp-dev-devops
@@ -127,7 +127,7 @@ oc adm policy add-cluster-role-to-group edit ocp-dev-qa-digital
 
 View the self-provisioners cluster role binding usage by running the following command:
 
-```
+```bash
 # oc describe clusterrolebinding.rbac self-provisioners
 
 Name:         self-provisioners
@@ -144,21 +144,20 @@ Subjects:
 
 Remove the self-provisioner cluster role from the group system:authenticated:oauth.
 
-```
+```bash
 # oc patch clusterrolebinding.rbac self-provisioners -p '{"subjects": null}'
 ```
 
 Edit the self-provisioners cluster role binding to prevent automatic updates to the role. Automatic updates reset the cluster roles to the default state.
 
 Run the following command:
-```
+```bash
 # oc edit clusterrolebinding.rbac self-provisioners
 ```
 
 In the displayed role binding, set the rbac.authorization.kubernetes.io/autoupdate parameter value to false, as shown in the following example:
 
-[source,yaml]
-```
+```yaml
 apiVersion: authorization.openshift.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -169,13 +168,13 @@ metadata:
 
 To update the role binding by using a single command:
 
-```
+```bash
 # oc patch clusterrolebinding.rbac self-provisioners -p '{ "metadata": { "annotations": { "rbac.authorization.kubernetes.io/autoupdate": "false" } } }'
 ```
 
 Login as an authenticated user and verify that it can no longer self-provision a project:
 
-```
+```bash
 # oc new-project test
 Error from server (Forbidden): You may not request a new project via this API.
 ```
