@@ -1,0 +1,10 @@
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+# Default groups and user config.
+resources:
+  - rb-ocp-dev-developer-edit.yaml
+  - rb-ocp-dev-devops-admin.yaml
+  - rb-ocp-dev-no-access.yaml
+  - rb-ocp-dev-qa-edit.yaml
+  - rb-ocp-dev-view-cluster-status.yaml
