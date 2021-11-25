@@ -1,11 +1,11 @@
-apiVersion: rbac.authorization.k8s.io/v1
+peapiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   annotations:
     rbac.authorization.kubernetes.io/autoupdate: "true"
   labels:
     kubernetes.io/bootstrapping: rbac-defaults
-  name: rb-ocp-dev-qa-digital-edit
+  name: rb-ocp-dev-qa-edit
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -13,4 +13,4 @@ roleRef:
 subjects:
   - apiGroup: rbac.authorization.k8s.io
     kind: Group
-    name: ocp-dev-qa-digital-edit
+    name: ocp-dev-qa-edit
