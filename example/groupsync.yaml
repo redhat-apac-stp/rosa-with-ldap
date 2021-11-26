@@ -23,7 +23,7 @@ spec:
         tolerateMemberNotFoundErrors: true
         tolerateMemberOutOfScopeErrors: true
         userNameAttributes:
-        - cn
+        - sAMAccountName
         userUIDAttribute: dn
         usersQuery:
           baseDN: ou=Users,dc=example,dc=com
