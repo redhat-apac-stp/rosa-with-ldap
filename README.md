@@ -81,7 +81,9 @@ TBD: ROSA integration using LDAP with TLS enabled.
 
 Synchronising of users and groups was achieved using the Group Sync Operator from RedHat Communities of Practice. Instructions for installing it can be found here:
 
-Other than creating the secret (remember to prefix the user name with either the NetBIOS name or use the email form) the critical piece of configuration that needs to be configured is the GroupSync custom resource.
+https://github.com/redhat-cop/group-sync-operator
+
+Other than creating the secret (remember to prefix the user name with either the NetBIOS name or use the email format) the critical piece of configuration that needs to be configured is the GroupSync custom resource in the group-sync-operator namespace.
 
 	apiVersion: redhatcop.redhat.io/v1alpha1
 	kind: GroupSync
