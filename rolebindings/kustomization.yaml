@@ -3,8 +3,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 
 # Default groups and user config.
 resources:
-  - rb-ocp-dev-developer-edit.yaml
-  - rb-ocp-dev-devops-admin.yaml
-  - rb-ocp-dev-no-access.yaml
-  - rb-ocp-dev-qa-edit.yaml
-  - rb-ocp-dev-view-cluster-status.yaml
+  - crb-ocp-dev-developer-edit.yaml
+  - crb-ocp-dev-devops-admin.yaml
+  - crb-ocp-dev-no-access.yaml
+  - crb-ocp-dev-qa-edit.yaml
+  - crb-ocp-dev-view-cluster-status.yaml
